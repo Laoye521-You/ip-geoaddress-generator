@@ -37,7 +37,7 @@ https://ip-geoaddress-generator.pages.dev/
 
 ## 部署
 
-[Cloudfare部署](Cloudfare部署教程.md)
+[Cloudflare部署](https://github.com/GuooGaii/ip-geoaddress-generator/blob/main/Cloudflare部署教程.md)
 
 Docker部署
 
@@ -86,6 +86,10 @@ docker run -p 3000:3000 guoogaii/ip-geoaddress-generator:latest
 - [RandomUser](https://randomuser.me/) - 随机用户信息生成
 - [OpenStreetMap](https://www.openstreetmap.org/) - 地理编码服务
 - [Google Maps](https://www.google.com/maps) - 地图显示服务
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=GuooGaii/ip-geoaddress-generator&type=Date)](https://www.star-history.com/#GuooGaii/ip-geoaddress-generator&Date)
 
 ## 许可证
 

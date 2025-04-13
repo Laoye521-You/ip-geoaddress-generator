@@ -16,26 +16,20 @@ import {
   Flex,
   Box,
   Code,
-  IconButton,
-  Separator,
   TextField,
   Button,
   Skeleton,
   SegmentedControl,
+  Separator,
 } from "@radix-ui/themes";
-import {
-  MoonIcon,
-  SunIcon,
-  ReloadIcon,
-  GitHubLogoIcon,
-  EnvelopeClosedIcon,
-} from "@radix-ui/react-icons";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { ThemeContext } from "./theme-provider";
 import { UserInfo } from "./components/UserInfo";
 import { AddressInfo } from "./components/AddressInfo";
 import { AddressSelector } from "./components/AddressSelector";
 import { InboxDialog } from "./components/InboxDialog";
 import { HistoryList } from "./components/HistoryList";
+import { TopBar } from "./components/TopBar";
 import Mailjs from "@cemalgnlts/mailjs";
 import { Toast } from "./components/Toast";
 
@@ -135,36 +129,8 @@ const useAddressData = (): UseAddressDataReturn => {
   };
 };
 
-const copyToClipboard = async (
-  text: string,
-  setCopiedId: (id: string) => void,
-  id: string
-) => {
-  try {
-    if (typeof window !== "undefined") {
-      try {
-        await window.navigator.clipboard.writeText(text);
-      } catch {
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        textArea.style.cssText =
-          "position:fixed;pointer-events:none;opacity:0;";
-        document.body.appendChild(textArea);
-        textArea.select();
-        textArea.setSelectionRange(0, 99999);
-        document.body.removeChild(textArea);
-      }
-      setCopiedId(id);
-      setTimeout(() => setCopiedId(""), 1000);
-    }
-  } catch (err) {
-    console.error("复制失败:", err);
-  }
-};
-
 export default function Home() {
   const { theme, setTheme } = useContext(ThemeContext);
-  const [copiedId, setCopiedId] = useState<string>("");
   const [inputIp, setInputIp] = useState<string>("");
   const [inputMode, setInputMode] = useState<string>("ip");
   const [selectedHistory, setSelectedHistory] = useState<string>("");
@@ -293,10 +259,6 @@ export default function Home() {
     };
   }, []);
 
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
-
   const handleGenerateAddress = async () => {
     setAddressLoading(true);
     try {
@@ -356,10 +318,6 @@ export default function Home() {
     } finally {
       setAddressLoading(false);
     }
-  };
-
-  const handleCopy = (text: string, id: string) => {
-    copyToClipboard(text, setCopiedId, id);
   };
 
   const handleDeleteAllHistory = () => {
@@ -466,56 +424,11 @@ export default function Home() {
 
   return (
     <Box>
-      {/* 导航栏 */}
-      <Flex
-        justify="end"
-        align="center"
-        px="6"
-        py="4"
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1000,
-        }}
-      >
-        <Flex gap="6" align="center">
-          <IconButton
-            size="4"
-            variant="ghost"
-            aria-label="收信箱"
-            onClick={() => setInboxOpen(true)}
-          >
-            <EnvelopeClosedIcon width="24" height="24" />
-          </IconButton>
-          <IconButton
-            size="4"
-            variant="ghost"
-            aria-label="GitHub"
-            onClick={() =>
-              window.open(
-                "https://github.com/GuooGaii/ip-geoaddress-generator",
-                "_blank"
-              )
-            }
-          >
-            <GitHubLogoIcon width="24" height="24" />
-          </IconButton>
-          <IconButton
-            size="4"
-            variant="ghost"
-            onClick={toggleTheme}
-            aria-label="切换主题"
-          >
-            {theme === "light" ? (
-              <MoonIcon width="24" height="24" />
-            ) : (
-              <SunIcon width="24" height="24" />
-            )}
-          </IconButton>
-        </Flex>
-      </Flex>
+      <TopBar
+        theme={theme}
+        setTheme={setTheme}
+        onInboxOpen={() => setInboxOpen(true)}
+      />
 
       {/* 主要内容 */}
       <Flex
@@ -622,20 +535,9 @@ export default function Home() {
               {error && <Text color="red">{error}</Text>}
               <Box style={{ width: "100%" }}>
                 <Flex direction="column" gap="3">
-                  <UserInfo
-                    user={user}
-                    loading={loading}
-                    copiedId={copiedId}
-                    onCopy={handleCopy}
-                    email={tempEmail}
-                  />
+                  <UserInfo user={user} loading={loading} email={tempEmail} />
                   <Separator size="4" />
-                  <AddressInfo
-                    address={address}
-                    loading={loading}
-                    copiedId={copiedId}
-                    onCopy={handleCopy}
-                  />
+                  <AddressInfo address={address} loading={loading} />
                 </Flex>
               </Box>
             </Flex>
